@@ -55,60 +55,93 @@ protocol GeneratorType {
 
 ---
 
-```swift
-struct IntSequence: SequenceType {
-
-    // Define the generator of the sequence
-    struct Generator: GeneratorType {
-        var value: Int // encapsulated state
-
-        init(initialValue: Int) {
-            value = initialValue
-        }
-
-        // returns the next value in the sequence
-        mutating func next() -> Int? {
-            return value++
-        }
-    }
-
-    func generate() -> Generator {
-        return Generator(initialValue: 0)
-    }
-}
-
-```
----
-
-### usage
-
-```swift
-let mySequence = IntSequence()
-for element in mySequence {
-    print(element)
-}
-
-// 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24...
-
-
-```
+# Example
 
 ---
 
-## Simplified
-`AnyGenerator<T>`
-
 ```swift
-struct IntSequence: SequenceType {
-    private var initialValue: Int
+public struct Deck {
+    private var cards: [PlayingCard]
 
-    init(initialValue: Int = 0) {
-        self.initialValue = initialValue
+    public static func standard52CardDeck() -> Deck {
+        let suits: [Suit] = [.Spades, .Hearts, .Diamonds, .Clubs]
+        let ranks: [Rank] = [.Ace, .Two, .Three, .Four, .Five, .Six, .Seven, .Eight, .Nine, .Ten, .Jack, .Queen, .King]
+
+        var cards: [PlayingCard] = []
+        for suit in suits {
+            for rank in ranks {
+                cards.append(PlayingCard(rank: rank, suit: suit))
+            }
+        }
+
+        return Deck(cards)
     }
 
-    func generate() -> AnyGenerator<Int> {
-        var closedValue = initialValue
-        return anyGenerator { return closedValue++ }
+    public init(_ cards: [PlayingCard]) {
+        self.cards = cards
+    }
+
+    public mutating func shuffle() {
+        cards.shuffleInPlace()
+    }
+
+    public mutating func deal() -> PlayingCard? {
+        guard !cards.isEmpty else { return nil }
+
+        return cards.removeLast()
+    }
+}
+```
+
+###### `https://github.com/apple/example-package-deckofplayingcards`
+
+---
+
+```swift
+let numberOfCards = 10
+var deck = Deck.standard52CardDeck()
+
+for _ in 1...numberOfCards {
+    guard let card = deck.deal() else {
+        print("No More Cards!")
+        break
+    }
+    print(card)
+}
+```
+
+---
+
+```swift
+public struct Deck: SequenceType {
+    ...
+}
+```
+
+---
+
+```swift
+public struct DeckGenerator: GeneratorType {
+    private var cards: [PlayingCard]
+    private var index = 0
+
+    init(cards: [PlayingCard]) {
+        self.cards = cards
+    }
+
+    public mutating func next() -> PlayingCard? {
+        guard index < cards.count else { return .None }
+        return cards[index++]
+    }
+}
+```
+
+---
+
+```swift
+public struct Deck: SequenceType {
+    public func generate() -> DeckGenerator {
+        return DeckGenerator(cards: cards)
     }
 }
 ```
