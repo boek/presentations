@@ -12,7 +12,7 @@ Swift defines the `SequenceType` as
 
 ```swift
 for element in mySequence {
-    // do something
+    ...
 }
 ```
 
@@ -23,7 +23,7 @@ for element in mySequence {
 ```swift
 let generator = mySequence.generate()
 while let element = generator.next() {
-  // do something
+    ...
 }
 ```
 
@@ -33,7 +33,12 @@ while let element = generator.next() {
 
 ---
 
-`func generate() -> Self.Generator`
+```swift
+protocol SequenceType {
+    typealias Generator: GeneratorType
+    func generate() -> Generator
+}
+```
 
 ---
 
@@ -60,10 +65,10 @@ protocol GeneratorType {
 ---
 
 ```swift
-public struct Deck {
+struct Deck {
     private var cards: [PlayingCard]
 
-    public static func standard52CardDeck() -> Deck {
+    static func standard52CardDeck() -> Deck {
         let suits: [Suit] = [.Spades, .Hearts, .Diamonds, .Clubs]
         let ranks: [Rank] = [.Ace, .Two, .Three, .Four, .Five, .Six, .Seven, .Eight, .Nine, .Ten, .Jack, .Queen, .King]
 
@@ -77,15 +82,15 @@ public struct Deck {
         return Deck(cards)
     }
 
-    public init(_ cards: [PlayingCard]) {
+    init(_ cards: [PlayingCard]) {
         self.cards = cards
     }
 
-    public mutating func shuffle() {
+    mutating func shuffle() {
         cards.shuffleInPlace()
     }
 
-    public mutating func deal() -> PlayingCard? {
+    mutating func deal() -> PlayingCard? {
         guard !cards.isEmpty else { return nil }
 
         return cards.removeLast()
@@ -113,7 +118,7 @@ for _ in 1...numberOfCards {
 ---
 
 ```swift
-public struct Deck: SequenceType {
+struct Deck: SequenceType {
     ...
 }
 ```
@@ -121,7 +126,7 @@ public struct Deck: SequenceType {
 ---
 
 ```swift
-public struct DeckGenerator: GeneratorType {
+struct DeckGenerator: GeneratorType {
     private var cards: [PlayingCard]
     private var index = 0
 
@@ -129,7 +134,7 @@ public struct DeckGenerator: GeneratorType {
         self.cards = cards
     }
 
-    public mutating func next() -> PlayingCard? {
+    mutating func next() -> PlayingCard? {
         guard index < cards.count else { return .None }
         return cards[index++]
     }
@@ -139,9 +144,102 @@ public struct DeckGenerator: GeneratorType {
 ---
 
 ```swift
-public struct Deck: SequenceType {
-    public func generate() -> DeckGenerator {
+struct Deck: SequenceType {
+    func generate() -> DeckGenerator {
         return DeckGenerator(cards: cards)
     }
 }
 ```
+
+---
+
+### usage
+
+```swift
+let deck = Deck.standard52CardDeck()
+deck.prefix(10).forEach { card in
+    ...
+}
+```
+
+---
+
+## With `SequenceType` you get all of the powerful methods you get with `Array` and `Dicitonary`
+
+> `map, filter, forEach, dropFirst, dropLast, prefix, suffix, split`
+
+---
+
+## AnyGenerator<T>
+
+---
+
+```swift
+struct Deck: SequenceType {
+    func generate() -> DeckGenerator {
+        return DeckGenerator(cards: cards)
+    }
+}
+```
+
+---
+
+```swift
+struct Deck: SequenceType {
+    func generate() -> AnyGenerator<PlayingCard> {
+        var index = 0
+
+        // pass it a "next" closure
+        return anyGenerator {
+            guard index < self.cards.count else { return .None }
+            return self.cards[index++]
+        }
+    }
+}
+```
+
+---
+
+## CollectionType
+
+```swift
+extension Deck: CollectionType {
+    var startIndex: Int { return 0 }
+    var endIndex: Int { return cards.count }
+
+    public subscript(i: Int) -> PlayingCard {
+        return cards[i]
+    }
+}
+```
+
+---
+
+> a collection is multi-pass: any element may be revisited merely by saving its index.<br><br><br><br><br><br>
+
+```swift
+// is the same as `for card in deck {}:`
+for i in deck.startIndex..<deck.endIndex {
+    let card = deck[i]
+    ...
+}
+```
+
+---
+
+## AnyGenerator<T>
+
+---
+
+```swift
+var positiveNumbers: AnyGenerator<Int> {
+    var i = 0
+    return anyGenerator { return i++ }
+}
+
+for i in positiveNumbers {
+    print(i)
+}
+```
+
+
