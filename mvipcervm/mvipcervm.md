@@ -6,14 +6,14 @@
 
 ---
 
-![](https://cldup.com/LjZ5VlJSIP-3000x3000.jpeg)
+![](blueprint.jpg)
 #### **what is software architecture?**
 
 ---
-![](https://cldup.com/LjZ5VlJSIP-3000x3000.jpeg)
-![fit left filtered](architecture.png)
+![](blueprint.jpg)
+![fit left](architecture.png)
 
-**as told by pasta**
+##### **(as told by pasta)**
 
 ---
 ![](simplicity.jpg)
@@ -21,20 +21,29 @@
 ###### Why Care?
 
 ---
+![](code.png)
 
-Testability
+![inline](xctest.png)
+
+### **Testability**
 
 ---
+![](quickrelease.jpg)
 
-Easier to change
+#### **easy to change**
 
 ---
 ![fit](parse-logo.png)
 
 ---
-![fit](parse-logo.png)
+![fit original](parse-logo.png)
 
 #[fit] 😭
+
+---
+![](layers.jpg)
+
+#### **decoupling layers**
 
 ---
 ![](simplicity.jpg)
@@ -42,8 +51,14 @@ Easier to change
 ## **simplicity vs complexity**
 
 ---
+![](cognitiveload.jpg)
 
-##  _**3. TESTABILITY**_
+### **cognitive load**
+
+---
+![](unittesting.gif)
+
+##  _**TESTABILITY**_
 
 ---
 ![](wat.png)
@@ -71,6 +86,7 @@ Easier to change
 ![inline](mvc1.png)
 
 ---
+
 ![](apple.jpg)
 
 ![inline](mvc2.png)
@@ -79,6 +95,20 @@ Easier to change
 ![](apple.jpg)
 
 ![inline](mvc3.png)
+
+---
+![](apple.jpg)
+
+# **models**
+
+---
+![](apple.jpg)
+
+### **represents the data**
+
+---
+![](apple.jpg)
+#[fit] **NOTHING ELSE**
 
 
 ---
