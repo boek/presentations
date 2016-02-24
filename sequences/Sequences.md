@@ -1,7 +1,7 @@
 build-lists: true
 
 # Sequences
-### IN SWIFT
+### IN SWIFT WOOHOO
 
 ---
 
@@ -12,6 +12,12 @@ build-lists: true
 ---
 
 ## What are Sequences?
+
+Lists:
+
+- Item 1
+- Item 2
+- Item 3
 
 ---
 
@@ -50,6 +56,15 @@ for element in mySequence {
 ---
 
 ## Under the hood
+
+
+```ruby
+class ServiceObject < TheAwesomeThing
+  def thing
+    "foo"
+  end
+end
+```
 
 ```swift
 let generator = mySequence.generate()
